@@ -25,25 +25,26 @@ public class ReplaceDialog extends JFrame {
 	private JButton btnReplaceAll;
 	private JCheckBox chkMatchCase;
 	
-	public ReplaceDialog(MainWindow mainWindow) {
-		mainTextArea = mainWindow.mainTextArea;		
+	public ReplaceDialog() {
+		contentPane = new JPanel();
+		txtFind = new JTextField();
+		txtReplace = new JTextField();
+		btnFind = new JButton("Find Next");
+		btnReplace = new JButton("Replace");
+		btnReplaceAll = new JButton("Replace All");
+		chkMatchCase = new JCheckBox("Match case");
+	}
+	
+	protected void initialize(MainWindow mainWindow) {
+		mainTextArea = MainWindow.mainTextArea;		
 		setAlwaysOnTop(true);
 		setResizable(false);
 		setType(Type.UTILITY);
 		setTitle("Replace");
 		setBounds(300, 300, 419, 186);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
 		JLabel lblFindWhat = new JLabel("Find what:");
 		lblFindWhat.setBounds(10, 11, 83, 14);
-		contentPane.add(lblFindWhat);
-		
-		txtFind = new JTextField();
 		txtFind.setBounds(111, 11, 173, 20);
-		contentPane.add(txtFind);
 		txtFind.setColumns(10);
 		txtFind.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
@@ -62,66 +63,54 @@ public class ReplaceDialog extends JFrame {
 					disableButtons();
 			}
 		});
-		
 		JLabel lblReplaceWith = new JLabel("Replace with:");
 		lblReplaceWith.setBounds(10, 43, 83, 14);
-		contentPane.add(lblReplaceWith);
-		
-		txtReplace = new JTextField();
 		txtReplace.setColumns(10);
 		txtReplace.setBounds(111, 43, 173, 20);
-		contentPane.add(txtReplace);
-		
-		btnFind = new JButton("Find Next");
 		btnFind.setEnabled(false);
 		btnFind.setBounds(296, 12, 105, 23);
-		contentPane.add(btnFind);
 		btnFind.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Do I share the Find function or reference it directly? Eeek
-			}
-			
+				// TODO
+			}	
 		});
-		
-		btnReplace = new JButton("Replace");
 		btnReplace.setEnabled(false);
 		btnReplace.setBounds(296, 42, 105, 23);
-		contentPane.add(btnReplace);
 		btnReplace.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO replace()
 			}
-			
 		});
-		
-		btnReplaceAll = new JButton("Replace All");
 		btnReplaceAll.setEnabled(false);
 		btnReplaceAll.setBounds(296, 73, 105, 23);
-		contentPane.add(btnReplaceAll);
 		btnReplaceAll.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO replaceAll()
 			}
-			
 		});
-		
-		chkMatchCase = new JCheckBox("Match case");
 		chkMatchCase.setBounds(8, 126, 97, 23);
-		contentPane.add(chkMatchCase);
-		
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mainWindow.hideAllDialogs();
+				dispose();
 			}
 		});
 		btnCancel.setBounds(296, 102, 105, 23);
+		
+		setContentPane(contentPane);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(null);
+		contentPane.add(lblFindWhat);
+		contentPane.add(txtFind);
+		contentPane.add(lblReplaceWith);
+		contentPane.add(txtReplace);
+		contentPane.add(btnFind);
+		contentPane.add(btnReplace);
+		contentPane.add(btnReplaceAll);
+		contentPane.add(chkMatchCase);
 		contentPane.add(btnCancel);
 	}
 	

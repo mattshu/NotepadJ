@@ -27,25 +27,24 @@ public class FindDialog extends JFrame {
 	private JRadioButton radDown;
 	private JCheckBox chkMatchCase;
 	
-	public FindDialog(MainWindow mainWindow) {
-		mainTextArea = mainWindow.mainTextArea;
+	public FindDialog() {
+		contentPane = new JPanel();
+		txtFind = new JTextField();
+		btnFindNext = new JButton("Find Next");
+		radUp = new JRadioButton("Up");
+		radDown = new JRadioButton("Down");
+		chkMatchCase = new JCheckBox("Match case");
+	}
+	public void initialize(MainWindow mainWindow) {
+		mainTextArea = MainWindow.mainTextArea;
 		setAlwaysOnTop(true);
 		setResizable(false);
 		setType(Type.UTILITY);
 		setTitle("Find");
 		setBounds(300, 300, 382, 145);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-				
 		JLabel lblFindWhat = new JLabel("Find what:");
 		lblFindWhat.setBounds(10, 11, 57, 14);
-		contentPane.add(lblFindWhat);
-		
-		txtFind = new JTextField();
 		txtFind.setBounds(77, 8, 173, 20);
-		contentPane.add(txtFind);
 		txtFind.setColumns(10);
 		txtFind.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
@@ -64,53 +63,45 @@ public class FindDialog extends JFrame {
 					btnFindNext.setEnabled(false);
 			}
 		});
-		
-		btnFindNext = new JButton("Find Next");
 		btnFindNext.setEnabled(false);
 		btnFindNext.setBounds(260, 7, 96, 23);
-		contentPane.add(btnFindNext);
 		btnFindNext.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				startFind();
-				
 			}
-			
 		});
-		
 		JButton btnCancel = new JButton("Cancel");
+		btnCancel.setBounds(260, 37, 96, 23);
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mainWindow.hideAllDialogs();
+				dispose();
 			}
 		});
-		btnCancel.setBounds(260, 37, 96, 23);
-		contentPane.add(btnCancel);
-		
+		radUp.setBounds(6, 24, 50, 23);
+		radDown.setBounds(58, 24, 64, 23);
+		radDown.setSelected(true);
 		JPanel panel = new JPanel();
 		panel.setName("");
 		panel.setBorder(new TitledBorder(null, "Direction", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel.setBounds(122, 40, 128, 54);
-		contentPane.add(panel);
 		panel.setLayout(null);
-		
-		radUp = new JRadioButton("Up");
-		radUp.setBounds(6, 24, 50, 23);
 		panel.add(radUp);
-		
-		radDown = new JRadioButton("Down");
-		radDown.setSelected(true);
-		radDown.setBounds(58, 24, 64, 23);
 		panel.add(radDown);
-		
-		chkMatchCase = new JCheckBox("Match case");
 		chkMatchCase.setBounds(6, 71, 97, 23);
-		contentPane.add(chkMatchCase);
-		
 		ButtonGroup group = new ButtonGroup();
 		group.add(radUp);
 		group.add(radDown);
+		setContentPane(contentPane);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(null);
+		contentPane.add(lblFindWhat);
+		contentPane.add(txtFind);
+		contentPane.add(btnFindNext);
+		contentPane.add(btnCancel);
+		contentPane.add(panel);
+		contentPane.add(chkMatchCase);
+		setVisible(true);
 	}
 
 	protected void startFind() {
