@@ -7,17 +7,15 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 public class GotoDialog extends JDialog {
 
 	private JPanel contentPanel;
-	private JTextArea mainTextArea;
 	private JTextField txtLineNumber;
 	private JButton btnGoTo;
 
@@ -27,8 +25,7 @@ public class GotoDialog extends JDialog {
 		btnGoTo = new JButton("Go To");
 	}
 	
-	protected void initialize(MainWindow mainWindow) {
-		mainTextArea = MainWindow.mainTextArea;
+	protected void initialize() {
 		setTitle("Go To Line");
 		setBounds(300, 300, 235, 162);
 		getContentPane().setLayout(new BorderLayout());
@@ -68,13 +65,13 @@ public class GotoDialog extends JDialog {
 	}
 	protected void gotoLine(int line) {
 		if (line <= 0) return;
-		int getLineCount = mainTextArea.getLineCount();
+		int getLineCount = MainWindow.mainTextArea.getLineCount();
 		if (line > getLineCount) {
 			JOptionPane.showMessageDialog(null, "The line number is beyond the total number of lines", "NotepadJ - Goto Line", JOptionPane.OK_OPTION);
 			return;
 		}
-		mainTextArea.setCaretPosition(mainTextArea.getDocument().getDefaultRootElement().getElement(line - 1).getStartOffset());
-		mainTextArea.requestFocus();
+		MainWindow.mainTextArea.setCaretPosition(MainWindow.mainTextArea.getDocument().getDefaultRootElement().getElement(line - 1).getStartOffset());
+		MainWindow.mainTextArea.requestFocus();
 		// TODO --
 	}
 }

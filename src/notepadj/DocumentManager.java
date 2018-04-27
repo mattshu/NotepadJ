@@ -1,6 +1,7 @@
 package notepadj;
 
 import java.awt.AWTException;
+import java.awt.Font;
 import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -13,15 +14,15 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.undo.UndoManager;
 
 public class DocumentManager {
 	
 	private MainWindow mainWindow;
-	private JTextArea mainTextArea;
-	protected final String DEFAULT_DOCUMENT_NAME = "Untitled Document";
+	protected final static String DEFAULT_DOCUMENT_NAME = "Untitled Document";
+	protected final static Font DEFAULT_FONT = new Font("Tahoma", Font.PLAIN, 14);
+	protected final static int DEFAULT_FONT_SIZE = 14;
 	protected UndoManager undoManager;
 	protected String documentPath = null;
 	protected String documentName = DEFAULT_DOCUMENT_NAME;
@@ -33,7 +34,6 @@ public class DocumentManager {
 	
 	public void initialize(MainWindow mainWindow) {
 		this.mainWindow = mainWindow;
-		mainTextArea = MainWindow.mainTextArea;
 	}
 	
 	protected final void createNewDocument() {
@@ -49,7 +49,7 @@ public class DocumentManager {
 	}
 	
 	protected final void openFile() {
-		File file = getFileByDialog();
+		File file = ToolDialogs.getFileDialog(mainWindow);
 		if (file != null && file.exists()) {
 			if (MainWindow.isEdited)
 				if (!trySaveChanges()) return;
@@ -60,31 +60,22 @@ public class DocumentManager {
 		}
 	}
 	
-	protected final void setupDocumentInfo() {
+	protected final void saveDocumentInfo() {
 		if (documentPath == null) {
 			JFileChooser fileChooser = new JFileChooser();
-			int option = fileChooser.showSaveDialog(mainWindow.frmNotepadJ);
+			int option = fileChooser.showSaveDialog(MainWindow.frmNotepadJ);
 			if (option == JFileChooser.APPROVE_OPTION)
 				setDocumentVarsFromFile(fileChooser.getSelectedFile());
 		}
 		else if (documentName == null || documentName == DEFAULT_DOCUMENT_NAME)
 			documentName = new File(documentPath).getName();
 	}
+	
 	private final void setDocumentVarsFromFile(File documentFile) {
 		documentPath = documentFile.getPath();
 		documentName = documentFile.getName(); 
 	}
 	
-
-
-	protected final File getFileByDialog() {
-		JFileChooser fileChooser = new JFileChooser();
-		int option = fileChooser.showOpenDialog(mainWindow.frmNotepadJ);
-		if (option == JFileChooser.APPROVE_OPTION) {
-			return fileChooser.getSelectedFile();
-		}
-		return null;
-	}
 	protected final void printFileToTextArea(String path) {
 		try {
 			StringBuffer sb = new StringBuffer();
@@ -116,7 +107,7 @@ public class DocumentManager {
 	}
 	
 	protected final void save() {
-		setupDocumentInfo();
+		saveDocumentInfo();
 		writeDocumentToFile();
 		mainWindow.updateDocumentTitle(documentName);
 		MainWindow.isEdited = false;
@@ -124,7 +115,7 @@ public class DocumentManager {
 	
 	protected final void saveAs() {
 		JFileChooser fileChooser = new JFileChooser();
-		int option = fileChooser.showSaveDialog(mainWindow.frmNotepadJ);
+		int option = fileChooser.showSaveDialog(MainWindow.frmNotepadJ);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			setDocumentVarsFromFile(fileChooser.getSelectedFile());
 			save();
@@ -158,14 +149,14 @@ public class DocumentManager {
 	}
 	
 	protected final void deleteSelectedTextManually() {
-		int startPos = mainTextArea.getSelectionStart();
-		int endPos = mainTextArea.getSelectionEnd();
-		int caretPos = mainTextArea.getCaretPosition();
-		String text = mainTextArea.getText();
+		int startPos = MainWindow.mainTextArea.getSelectionStart();
+		int endPos = MainWindow.mainTextArea.getSelectionEnd();
+		int caretPos = MainWindow.mainTextArea.getCaretPosition();
+		String text = MainWindow.mainTextArea.getText();
 		String outerLeftText = text.substring(0, startPos);
 		String outerRightText = text.substring(endPos, text.length());
-		mainTextArea.setText(outerLeftText + outerRightText);
-		mainTextArea.setCaretPosition(caretPos);
+		MainWindow.mainTextArea.setText(outerLeftText + outerRightText);
+		MainWindow.mainTextArea.setCaretPosition(caretPos);
 	}
 	
 	protected final void deleteSelectedText() {
@@ -184,7 +175,6 @@ public class DocumentManager {
 		}
 	}
 	
-
 	private final void resetDocumentVars() {
 		documentPath = null;
 		documentName = DEFAULT_DOCUMENT_NAME;
@@ -192,7 +182,7 @@ public class DocumentManager {
 	
 	private final void resetDocument() {
 		MainWindow.isEdited = false;
-		mainTextArea.setText("");
+		MainWindow.mainTextArea.setText("");
 		resetDocumentVars();
 		mainWindow.resetDocumentTitle();
 	}
@@ -232,10 +222,10 @@ public class DocumentManager {
 	}
 	
 	protected void toggleWordWrap() {
+		wordWrapState = !wordWrapState;
 		MainWindow.mainTextArea.setWrapStyleWord(wordWrapState);
 		MainWindow.mainTextArea.setLineWrap(wordWrapState);
 		mainWindow.mainScrollPane.setVerticalScrollBarPolicy(wordWrapState ? ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED : ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		mainWindow.mainScrollPane.setHorizontalScrollBarPolicy(wordWrapState ? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER : ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		wordWrapState = !wordWrapState;
 	}
 }

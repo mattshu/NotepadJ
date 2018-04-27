@@ -24,12 +24,12 @@ public class MenuActions {
 	}
 	
 	protected void changeFont() {
-		// TODO Auto-generated method stub
+		ToolDialogs.showFontDialog();
 
 	}
 	
 	protected void findDialog() {
-		ToolDialogs.showFindDialog(mainWindow);
+		ToolDialogs.showFindDialog();
 	}
 	
 	protected void findNext() {
@@ -37,21 +37,17 @@ public class MenuActions {
 	}
 	
 	protected void replaceDialog() {
-		ToolDialogs.showReplaceDialog(mainWindow);
+		ToolDialogs.showReplaceDialog();
 	}
 	
 	protected void gotoDialog() {
-		ToolDialogs.showGotoDialog(mainWindow);
+		ToolDialogs.showGotoDialog();
 	}
 
 	protected void toggleWordWrap() {
 		MainWindow.documentManager.toggleWordWrap();
 	}
 	
-	protected void toggleStatusBar() {
-		// TODO Auto-generated method stub
-	}
-
 	public void showAboutDialog() {
 		ToolDialogs.showAboutDialog();
 	}

@@ -1,22 +1,20 @@
 package notepadj;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 public class ReplaceDialog extends JFrame {
 
-	private JTextArea mainTextArea;
-	
 	private JPanel contentPane;
 	private JTextField txtFind;
 	private JTextField txtReplace;
@@ -35,8 +33,7 @@ public class ReplaceDialog extends JFrame {
 		chkMatchCase = new JCheckBox("Match case");
 	}
 	
-	protected void initialize(MainWindow mainWindow) {
-		mainTextArea = MainWindow.mainTextArea;		
+	protected void initialize() {
 		setAlwaysOnTop(true);
 		setResizable(false);
 		setType(Type.UTILITY);

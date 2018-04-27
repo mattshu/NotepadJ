@@ -10,7 +10,6 @@ public class Program {
 				try {
 					MainWindow mainWindow = new MainWindow();
 					mainWindow.initialize();
-					mainWindow.frmNotepadJ.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

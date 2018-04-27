@@ -1,25 +1,23 @@
 package notepadj;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.JRadioButton;
-import javax.swing.JTextArea;
-import javax.swing.JCheckBox;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class FindDialog extends JFrame {
 
-	private JTextArea mainTextArea;
-	
 	private JPanel contentPane;
 	private JTextField txtFind;
 	private JButton btnFindNext;
@@ -35,8 +33,10 @@ public class FindDialog extends JFrame {
 		radDown = new JRadioButton("Down");
 		chkMatchCase = new JCheckBox("Match case");
 	}
-	public void initialize(MainWindow mainWindow) {
-		mainTextArea = MainWindow.mainTextArea;
+	
+	// TODO Redo this system??
+	
+	public void initialize() {
 		setAlwaysOnTop(true);
 		setResizable(false);
 		setType(Type.UTILITY);
@@ -47,17 +47,14 @@ public class FindDialog extends JFrame {
 		txtFind.setBounds(77, 8, 173, 20);
 		txtFind.setColumns(10);
 		txtFind.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
 			public void changedUpdate(DocumentEvent arg0) {
 				// Ignore
 			}
 
-			@Override
 			public void insertUpdate(DocumentEvent arg0) {
 				btnFindNext.setEnabled(true);
 			}
 
-			@Override
 			public void removeUpdate(DocumentEvent arg0) {
 				if (txtFind.getText().length() == 0)
 					btnFindNext.setEnabled(false);
@@ -66,7 +63,6 @@ public class FindDialog extends JFrame {
 		btnFindNext.setEnabled(false);
 		btnFindNext.setBounds(260, 7, 96, 23);
 		btnFindNext.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				startFind();
 			}
@@ -106,10 +102,10 @@ public class FindDialog extends JFrame {
 
 	protected void startFind() {
 		String query = txtFind.getText();
-		if (mainTextArea == null || query.length() == 0) return;
-		String mainText = mainTextArea.getText();
+		if (MainWindow.mainTextArea == null || query.length() == 0) return;
+		String mainText = MainWindow.mainTextArea.getText();
 		if (mainText.length() == 0) return;
-		int caretPos = mainTextArea.getCaretPosition();
+		int caretPos = MainWindow.mainTextArea.getCaretPosition();
 		int queryLen = query.length();
 		if (radDown.isSelected()) {
 			for (int i = caretPos; i < mainText.length() - queryLen; i++) {
@@ -137,7 +133,7 @@ public class FindDialog extends JFrame {
 		return ((chkMatchCase.isSelected() && sub.equals(query)) || (sub.equalsIgnoreCase(query))); 
 	}
 	private void highlightFoundString(int start, int end) {
-		mainTextArea.setSelectionStart(start);
-		mainTextArea.setSelectionEnd(end);
+		MainWindow.mainTextArea.setSelectionStart(start);
+		MainWindow.mainTextArea.setSelectionEnd(end);
 	}
 }

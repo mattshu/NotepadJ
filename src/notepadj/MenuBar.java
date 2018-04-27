@@ -31,14 +31,14 @@ public class MenuBar implements ActionListener {
 	private JMenuItem mntmReplace;
 	private JMenuItem mntmSelectAll;
 	private JCheckBoxMenuItem chmntmWordWrap = new JCheckBoxMenuItem("Word Wrap");
-	private JCheckBoxMenuItem chmntmStatusBar = new JCheckBoxMenuItem("Status Bar");
+	//private JCheckBoxMenuItem chmntmStatusBar = new JCheckBoxMenuItem("Status Bar");
 	
 	public MenuBar() {
 		menuActions = new MenuActions(mainWindow);
 	}
-	protected JMenuBar getMenuBar(MainWindow mainWindow) {
+	protected JMenuBar getMenuBar() {
 		menuBar = new JMenuBar();
-		mainWindow.frmNotepadJ.setJMenuBar(menuBar);
+		MainWindow.frmNotepadJ.setJMenuBar(menuBar);
 		JMenu mnFile = new JMenu("File");
 		JMenuItem mntmNew = new JMenuItem("New");
 		JMenuItem mntmOpen = new JMenuItem("Open...");
@@ -58,13 +58,13 @@ public class MenuBar implements ActionListener {
 		JMenuItem mntmPutTimeDate = new JMenuItem("Time/Date");
 		JMenu mnFormat = new JMenu("Format");
 		JMenuItem mntmFont = new JMenuItem("Font...");
-		JMenu mnView = new JMenu("View");
+		//JMenu mnView = new JMenu("View");
 		JMenu mnHelp = new JMenu("Help");
 		JMenuItem mntmAboutNotepadJ = new JMenuItem("About NotepadJ");
 		
 		menuBar.add(mnFile);
 		menuBar.add(mnEdit);
-		menuBar.add(mnView);
+		//menuBar.add(mnView);
 		menuBar.add(mnFormat);
 		menuBar.add(mnHelp);
 		
@@ -86,9 +86,9 @@ public class MenuBar implements ActionListener {
 		mntmAboutNotepadJ.addActionListener(this);
 		
 		chmntmWordWrap.addActionListener(this);
-		chmntmStatusBar.addActionListener(this);
+		//chmntmStatusBar.addActionListener(this);
 		mnFormat.add(chmntmWordWrap);
-		mnView.add(chmntmStatusBar);
+		//mnView.add(chmntmStatusBar);
 		
 		mnEdit.addMenuListener(new MenuListener() {
 			@Override
@@ -244,9 +244,9 @@ public class MenuBar implements ActionListener {
 		case "Font...":
 			menuActions.changeFont();
 			break;
-		case "Status Bar":
-			menuActions.toggleStatusBar();
-			break;
+		//case "Status Bar":
+			//menuActions.toggleStatusBar();
+			//break;
 		case "About NotepadJ":
 			menuActions.showAboutDialog();
 			break;
