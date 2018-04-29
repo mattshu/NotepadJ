@@ -8,18 +8,20 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 public class GotoDialog extends JDialog {
 
+	private JTextArea mainTextArea;
 	private JPanel contentPanel;
 	private JTextField txtLineNumber;
 	private JButton btnGoTo;
 
 	public GotoDialog() {
+		mainTextArea = MainWindow.getMainTextArea();
 		contentPanel = new JPanel();
 		txtLineNumber = new JTextField();
 		btnGoTo = new JButton("Go To");
@@ -31,8 +33,6 @@ public class GotoDialog extends JDialog {
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		getRootPane().setDefaultButton(btnGoTo);
-		setModalityType(ModalityType.APPLICATION_MODAL);
-		setModal(true);
 		JLabel lblLineNumber = new JLabel("Line number:");
 		lblLineNumber.setBounds(12, 12, 82, 16);
 		txtLineNumber.setBounds(12, 40, 195, 20);
@@ -57,21 +57,20 @@ public class GotoDialog extends JDialog {
 		contentPanel.setLayout(null);
 		contentPanel.add(lblLineNumber);
 		contentPanel.add(txtLineNumber);
+		setVisible(true);
 	}
-
 	protected void goToLine(String line) {
 		gotoLine(Integer.parseInt(line));
-		txtLineNumber.setText("");
 	}
 	protected void gotoLine(int line) {
 		if (line <= 0) return;
-		int getLineCount = MainWindow.mainTextArea.getLineCount();
+		int getLineCount = mainTextArea.getLineCount();
 		if (line > getLineCount) {
-			JOptionPane.showMessageDialog(null, "The line number is beyond the total number of lines", "NotepadJ - Goto Line", JOptionPane.OK_OPTION);
+			ToolDialogs.msgDialog("The line number is beyond the total number of lines.");
 			return;
 		}
-		MainWindow.mainTextArea.setCaretPosition(MainWindow.mainTextArea.getDocument().getDefaultRootElement().getElement(line - 1).getStartOffset());
-		MainWindow.mainTextArea.requestFocus();
-		// TODO --
+		mainTextArea.setCaretPosition(mainTextArea.getDocument().getDefaultRootElement().getElement(line - 1).getStartOffset());
+		mainTextArea.requestFocus();
+		dispose();
 	}
 }

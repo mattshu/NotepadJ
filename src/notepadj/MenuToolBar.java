@@ -12,13 +12,15 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.DefaultEditorKit;
 
-public class MenuBar implements ActionListener {
+public class MenuToolBar implements ActionListener {
 	
-	private MainWindow mainWindow;
+	private JTextArea mainTextArea;
+	private DocumentManager documentManager;
 	private MenuActions menuActions;
 	
 	protected JMenuBar menuBar;
@@ -33,12 +35,14 @@ public class MenuBar implements ActionListener {
 	private JCheckBoxMenuItem chmntmWordWrap = new JCheckBoxMenuItem("Word Wrap");
 	//private JCheckBoxMenuItem chmntmStatusBar = new JCheckBoxMenuItem("Status Bar");
 	
-	public MenuBar() {
-		menuActions = new MenuActions(mainWindow);
+	public MenuToolBar() {
+		mainTextArea = MainWindow.getMainTextArea();
+		documentManager = MainWindow.getDocumentManager();
+		menuActions = new MenuActions();
 	}
-	protected JMenuBar getMenuBar() {
+	protected JMenuBar getMenuToolBar() {
 		menuBar = new JMenuBar();
-		MainWindow.frmNotepadJ.setJMenuBar(menuBar);
+		MainWindow.getFrame().setJMenuBar(menuBar);
 		JMenu mnFile = new JMenu("File");
 		JMenuItem mntmNew = new JMenuItem("New");
 		JMenuItem mntmOpen = new JMenuItem("Open...");
@@ -91,19 +95,16 @@ public class MenuBar implements ActionListener {
 		//mnView.add(chmntmStatusBar);
 		
 		mnEdit.addMenuListener(new MenuListener() {
-			@Override
 			public void menuSelected(MenuEvent e) {
 				onEditMenuSelected();
 			}
 
-			@Override
 			public void menuCanceled(MenuEvent arg0) {
-				;
+				// Ignore
 			}
 
-			@Override
 			public void menuDeselected(MenuEvent arg0) {
-				;
+				// Ignore
 			}
 		});
 		
@@ -118,13 +119,13 @@ public class MenuBar implements ActionListener {
 		mnEdit.add(mntmUndo);
 		mnEdit.add(mntmRedo);
 		mnEdit.add(new JSeparator());
-		Action cutAction = MainWindow.mainTextArea.getActionMap().get(DefaultEditorKit.cutAction);
+		Action cutAction = mainTextArea.getActionMap().get(DefaultEditorKit.cutAction);
 		mntmCut = mnEdit.add(cutAction);
 		mntmCut.setText("Cut");
-		Action copyAction = MainWindow.mainTextArea.getActionMap().get(DefaultEditorKit.copyAction);
+		Action copyAction = mainTextArea.getActionMap().get(DefaultEditorKit.copyAction);
 		mntmCopy = mnEdit.add(copyAction);
 		mntmCopy.setText("Copy");
-		Action pasteAction = MainWindow.mainTextArea.getActionMap().get(DefaultEditorKit.pasteAction);
+		Action pasteAction = mainTextArea.getActionMap().get(DefaultEditorKit.pasteAction);
 		mntmPaste = mnEdit.add(pasteAction);
 		mntmPaste.setText("Paste");
 		mnEdit.add(mntmDelete);
@@ -134,7 +135,7 @@ public class MenuBar implements ActionListener {
 		mnEdit.add(mntmReplace);
 		mnEdit.add(mntmGoto);
 		mnEdit.add(new JSeparator());
-		Action selectAllAction = MainWindow.mainTextArea.getActionMap().get(DefaultEditorKit.selectAllAction);
+		Action selectAllAction = mainTextArea.getActionMap().get(DefaultEditorKit.selectAllAction);
 		mntmSelectAll = mnEdit.add(selectAllAction);
 		mntmSelectAll.setText("Select All");
 		mnEdit.add(mntmPutTimeDate);
@@ -145,7 +146,7 @@ public class MenuBar implements ActionListener {
 	}
 	
 	private final void onEditMenuSelected() {
-		if (MainWindow.mainTextArea.getText().isEmpty())
+		if (mainTextArea.getText().isEmpty())
 			disableSpecialEditMenuItems();
 		else
 		{
@@ -164,7 +165,7 @@ public class MenuBar implements ActionListener {
 		mntmReplace.setEnabled(false);
 	}
 	private final void setSpecialEditMenuStates() {
-		boolean selectedTextExists = MainWindow.mainTextArea.getSelectedText() != null;
+		boolean selectedTextExists = mainTextArea.getSelectedText() != null;
 		mntmCut.setEnabled(selectedTextExists);
 		mntmCopy.setEnabled(selectedTextExists);
 		mntmDelete.setEnabled(selectedTextExists);
@@ -194,31 +195,31 @@ public class MenuBar implements ActionListener {
 		String menuItem = e.getActionCommand();
 		switch (menuItem) {
 		case "New":
-			MainWindow.documentManager.createNewDocument();
+			documentManager.createNewDocument();
 			break;
 		case "Open...":
-			MainWindow.documentManager.openFile();
+			documentManager.openFile();
 			break;
 		case "Save":
-			MainWindow.documentManager.save();
+			documentManager.save();
 			break;
 		case "Save As...":
-			MainWindow.documentManager.saveAs();
+			documentManager.saveAs();
 			break;
 		case "Print...":
-			MainWindow.documentManager.print();
+			documentManager.print();
 			break;
 		case "Exit":
 			MainWindow.exit();
 			break;
 		case "Undo":
-			MainWindow.documentManager.undo();
+			documentManager.undo();
 			break;
 		case "Redo":
-			MainWindow.documentManager.redo();
+			documentManager.redo();
 			break;
 		case "Delete":
-			MainWindow.documentManager.deleteSelectedText();
+			documentManager.deleteSelectedText();
 			break;
 		case "Find...":
 			menuActions.findDialog();

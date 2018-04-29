@@ -8,8 +8,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -22,8 +22,14 @@ public class ReplaceDialog extends JFrame {
 	private JButton btnReplace;
 	private JButton btnReplaceAll;
 	private JCheckBox chkMatchCase;
+	private DocumentManager documentManager;
+	private JTextArea mainTextArea;
+	private Finder finder;
 	
 	public ReplaceDialog() {
+		documentManager = MainWindow.getDocumentManager();
+		finder = documentManager.getFinder();
+		mainTextArea = MainWindow.getMainTextArea();
 		contentPane = new JPanel();
 		txtFind = new JTextField();
 		txtReplace = new JTextField();
@@ -33,7 +39,7 @@ public class ReplaceDialog extends JFrame {
 		chkMatchCase = new JCheckBox("Match case");
 	}
 	
-	protected void initialize() {
+	public void initialize() {
 		setAlwaysOnTop(true);
 		setResizable(false);
 		setType(Type.UTILITY);
@@ -44,17 +50,14 @@ public class ReplaceDialog extends JFrame {
 		txtFind.setBounds(111, 11, 173, 20);
 		txtFind.setColumns(10);
 		txtFind.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
 			public void changedUpdate(DocumentEvent arg0) {
 				// Ignore
 			}
 		
-			@Override
 			public void insertUpdate(DocumentEvent arg0) {
 				enableButtons();
 			}
 		
-			@Override
 			public void removeUpdate(DocumentEvent arg0) {
 				if (txtFind.getText().length() == 0)
 					disableButtons();
@@ -67,25 +70,22 @@ public class ReplaceDialog extends JFrame {
 		btnFind.setEnabled(false);
 		btnFind.setBounds(296, 12, 105, 23);
 		btnFind.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO
+				startFind();
 			}	
 		});
 		btnReplace.setEnabled(false);
 		btnReplace.setBounds(296, 42, 105, 23);
 		btnReplace.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO replace()
+				replace();
 			}
 		});
 		btnReplaceAll.setEnabled(false);
 		btnReplaceAll.setBounds(296, 73, 105, 23);
 		btnReplaceAll.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO replaceAll()
+				replaceAll();
 			}
 		});
 		chkMatchCase.setBounds(8, 126, 97, 23);
@@ -98,7 +98,6 @@ public class ReplaceDialog extends JFrame {
 		btnCancel.setBounds(296, 102, 105, 23);
 		
 		setContentPane(contentPane);
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
 		contentPane.add(lblFindWhat);
 		contentPane.add(txtFind);
@@ -109,6 +108,7 @@ public class ReplaceDialog extends JFrame {
 		contentPane.add(btnReplaceAll);
 		contentPane.add(chkMatchCase);
 		contentPane.add(btnCancel);
+		setVisible(true);
 	}
 	
 	private void enableButtons() {
@@ -120,5 +120,34 @@ public class ReplaceDialog extends JFrame {
 		btnFind.setEnabled(false);
 		btnReplace.setEnabled(false);
 		btnReplaceAll.setEnabled(false);
+	}
+	private void setFinderOptions() {
+		FindOptions options = new FindOptions();
+		options.setQuery(txtFind.getText());
+		options.setMatchCase(chkMatchCase.isSelected());
+		finder.setOptions(options);
+	}
+	private void startFind() {
+		if (finder.hasEmptyQuery())
+			setFinderOptions();
+		finder.find();
+	}
+	
+	private void replace() {
+		if (mainTextArea.getSelectedText() == null) startFind();
+		if (mainTextArea.getSelectedText() == null) return;
+		mainTextArea.replaceSelection(txtReplace.getText());
+		startFind();
+	}
+	
+	private void replaceAll() {
+		String document = mainTextArea.getText();
+		String find = txtFind.getText();
+		String replace = txtReplace.getText();
+		if (!chkMatchCase.isSelected())
+			find = "(?i)" + find; // Case-insensitive regex
+		document = document.replaceAll(find, replace);
+		mainTextArea.setText(document);
+		mainTextArea.setCaretPosition(0);
 	}
 }

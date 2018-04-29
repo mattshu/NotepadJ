@@ -2,6 +2,10 @@ package notepadj;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.InputMethodListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -10,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -18,6 +23,10 @@ import javax.swing.event.DocumentListener;
 
 public class FindDialog extends JFrame {
 
+	private static FindDialog instance;
+	
+	private Finder finder;
+	private JTextArea mainTextArea;
 	private JPanel contentPane;
 	private JTextField txtFind;
 	private JButton btnFindNext;
@@ -26,6 +35,11 @@ public class FindDialog extends JFrame {
 	private JCheckBox chkMatchCase;
 	
 	public FindDialog() {
+		if (instance == null)
+			instance = this;
+		else return;
+		mainTextArea = MainWindow.getMainTextArea();
+		finder = MainWindow.getDocumentManager().getFinder();
 		contentPane = new JPanel();
 		txtFind = new JTextField();
 		btnFindNext = new JButton("Find Next");
@@ -34,12 +48,13 @@ public class FindDialog extends JFrame {
 		chkMatchCase = new JCheckBox("Match case");
 	}
 	
-	// TODO Redo this system??
-	
+	public static FindDialog getInstance() { return instance; }
+		
 	public void initialize() {
 		setAlwaysOnTop(true);
 		setResizable(false);
 		setType(Type.UTILITY);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setTitle("Find");
 		setBounds(300, 300, 382, 145);
 		JLabel lblFindWhat = new JLabel("Find what:");
@@ -53,28 +68,43 @@ public class FindDialog extends JFrame {
 
 			public void insertUpdate(DocumentEvent arg0) {
 				btnFindNext.setEnabled(true);
+				onOptionsChanged();
 			}
 
 			public void removeUpdate(DocumentEvent arg0) {
 				if (txtFind.getText().length() == 0)
 					btnFindNext.setEnabled(false);
+				onOptionsChanged();
+			}
+		});
+		txtFind.addInputMethodListener(new InputMethodListener() {
+			public void caretPositionChanged(InputMethodEvent arg0) {
+				onOptionsChanged();
+			}
+			public void inputMethodTextChanged(InputMethodEvent arg0) {
+				onOptionsChanged();
 			}
 		});
 		btnFindNext.setEnabled(false);
 		btnFindNext.setBounds(260, 7, 96, 23);
 		btnFindNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				startFind();
+				finder.find();
 			}
 		});
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.setBounds(260, 37, 96, 23);
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dispose();
+				setVisible(false);
 			}
 		});
 		radUp.setBounds(6, 24, 50, 23);
+		radUp.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				onOptionsChanged();
+			}
+		});
 		radDown.setBounds(58, 24, 64, 23);
 		radDown.setSelected(true);
 		JPanel panel = new JPanel();
@@ -100,40 +130,17 @@ public class FindDialog extends JFrame {
 		setVisible(true);
 	}
 
-	protected void startFind() {
-		String query = txtFind.getText();
-		if (MainWindow.mainTextArea == null || query.length() == 0) return;
-		String mainText = MainWindow.mainTextArea.getText();
-		if (mainText.length() == 0) return;
-		int caretPos = MainWindow.mainTextArea.getCaretPosition();
-		int queryLen = query.length();
-		if (radDown.isSelected()) {
-			for (int i = caretPos; i < mainText.length() - queryLen; i++) {
-				if (isQueryInTextAtPosition(query, mainText, i)) {
-					System.out.println(i + " [d] " + i + queryLen);
-					//highlightFoundString(i, i + queryLen);
-					break;
-				}
-			}
-		}
-		else {
-			for (int i = caretPos - 1 - queryLen; i >= 0; i--) {
-				if (isQueryInTextAtPosition(query, mainText, i)) {
-					highlightFoundString(i - queryLen - 1, i);
-					System.out.println(i + " [u] " + i + queryLen);
-					break;
-				}
-			}
-		}
+	private void onOptionsChanged() {
+		setFindOptions();
 	}
-	private boolean isQueryInTextAtPosition(String query, String text, int position) {
-		int queryLen = query.length();
-		System.out.println("query: " + query + " text: " + text + " position: " + position);
-		String sub = text.substring(position, position + queryLen);
-		return ((chkMatchCase.isSelected() && sub.equals(query)) || (sub.equalsIgnoreCase(query))); 
+	
+	private void setFindOptions() {
+		FindOptions options = new FindOptions();
+		options.setQuery(txtFind.getText());
+		options.setDirection(radUp.isSelected() ? FindOptions.UP : FindOptions.DOWN);
+		options.setCaretPosition(mainTextArea.getCaretPosition());
+		options.setMatchCase(chkMatchCase.isSelected());
+		finder.setOptions(options);
 	}
-	private void highlightFoundString(int start, int end) {
-		MainWindow.mainTextArea.setSelectionStart(start);
-		MainWindow.mainTextArea.setSelectionEnd(end);
-	}
+	
 }

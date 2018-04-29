@@ -3,53 +3,36 @@ package notepadj;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import javax.swing.JTextArea;
+
 public class MenuActions {
 	
-	private MainWindow mainWindow;
+	private JTextArea mainTextArea;
+	private DocumentManager documentManager;
 	
-	public MenuActions(MainWindow mainWindow) { 
-		this.mainWindow = mainWindow;
+	public MenuActions() { 
+		mainTextArea = MainWindow.getMainTextArea();
+		documentManager = MainWindow.getDocumentManager();
 	}
 
-	protected final void selectAllText() {
-		MainWindow.mainTextArea.setSelectionStart(0);
-		MainWindow.mainTextArea.setSelectionEnd(-1);
+	public final void selectAllText() {
+		mainTextArea.setSelectionStart(0);
+		mainTextArea.setSelectionEnd(-1);
 	}
 	
-	protected final void insertTimeDateAtCaret() {
+	public final void insertTimeDateAtCaret() {
 		LocalDateTime dateTime = LocalDateTime.now();
 		// 11:08 PM 3/20/2018
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a M/d/yyyy");
-		MainWindow.mainTextArea.insert(dateTime.format(dateTimeFormatter), MainWindow.mainTextArea.getCaretPosition());
+		mainTextArea.insert(dateTime.format(dateTimeFormatter), mainTextArea.getCaretPosition());
 	}
 	
-	protected void changeFont() {
-		ToolDialogs.showFontDialog();
-
-	}
-	
-	protected void findDialog() {
-		ToolDialogs.showFindDialog();
-	}
-	
-	protected void findNext() {
-		MainWindow.documentManager.findNext();	
-	}
-	
-	protected void replaceDialog() {
-		ToolDialogs.showReplaceDialog();
-	}
-	
-	protected void gotoDialog() {
-		ToolDialogs.showGotoDialog();
-	}
-
-	protected void toggleWordWrap() {
-		MainWindow.documentManager.toggleWordWrap();
-	}
-	
-	public void showAboutDialog() {
-		ToolDialogs.showAboutDialog();
-	}
+	public void changeFont() { ToolDialogs.showFontDialog(); }
+	public void findDialog() { ToolDialogs.showFindDialog(); }
+	public void findNext() { documentManager.findNext(); }
+	public void replaceDialog() { ToolDialogs.showReplaceDialog(); }
+	public void gotoDialog() { ToolDialogs.showGotoDialog(); }
+	public void toggleWordWrap() { documentManager.toggleWordWrap(); }
+	public void showAboutDialog() { ToolDialogs.showAboutDialog(); }
 	
 }

@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
 import javax.swing.SwingConstants;
@@ -28,6 +29,7 @@ import javax.swing.event.ListSelectionListener;
 
 public class FontDialog extends JDialog {
 
+	private JTextArea mainTextArea;
 	private final JPanel contentPanel = new JPanel();
 	protected JTextField txtFont;
 	protected JTextField txtFontStyle;
@@ -39,6 +41,7 @@ public class FontDialog extends JDialog {
 	protected JComboBox<String> cbxFontScript;
 
 	public FontDialog() {
+		mainTextArea = MainWindow.getMainTextArea();
 		txtFont = new JTextField();
 		txtFontStyle = new JTextField();
 		txtFontSize = new JTextField();
@@ -134,14 +137,6 @@ public class FontDialog extends JDialog {
 		contentPanel.add(scrollFontSizes);
 		contentPanel.add(btnOk);
 		contentPanel.add(btnCancel);
-		
-
-		
-
-
-
-
-		
 		loadFontLists();
 		getMainFont();
 		setSampleTextFont();
@@ -188,7 +183,7 @@ public class FontDialog extends JDialog {
 	private void setMainFont() {
 		try {
 			Font selectedFont = new Font(txtFont.getText(), getFontStyleFromText(), getFontSizeFromText());
-			MainWindow.mainTextArea.setFont(selectedFont);
+			mainTextArea.setFont(selectedFont);
 			
 		} catch (Exception ex) {
 			System.out.println("Ignoring invalid font");
@@ -219,7 +214,7 @@ public class FontDialog extends JDialog {
 	}
 	
 	private void getMainFont() {
-		Font mainFont = MainWindow.mainTextArea.getFont();
+		Font mainFont = mainTextArea.getFont();
 		String fontName = mainFont.getFontName();
 		ArrayList<String> fontList = new ArrayList<String>();
 		ListModel<String> model = lstFonts.getModel();
